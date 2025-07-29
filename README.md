@@ -52,12 +52,12 @@ This demo shows how to create an interactive interface that connects to the Geni
 
 2. **Clone this repo locally**
    ```bash
-   git clone git@github.com:CEDipEngineering/Genie_DBApps_Baseline.git
+   git clone git@github.com:CEDipEngineering/pbi_genie_app.git
    ```
 3. **Sync future edits back to Databricks**
    Remember to edit this path to match your context. I suggest starting with your personal Workspace folder for development, but saving it to a non-personal folder in production.
    ```bash
-   databricks sync --watch . /Workspace/Users/carlos.dip@databricks.com/Genie_DBApps_Baseline
+   databricks sync --watch . /Workspace/Users/carlos.dip@databricks.com/pbi_genie_app
    ```
 
 ### Deploy to Databricks Apps
@@ -65,7 +65,7 @@ This demo shows how to create an interactive interface that connects to the Geni
 1. **Create the app** (first time only):
    This may take a few minutes, we're creating and starting some compute to be used by the app's frontend.
    ```bash
-   databricks apps create pbi-genie-assistant --description "Power BI Dashboard Assistant with Genie"
+   databricks apps create powerbi-genie-assistant --description "Power BI Dashboard Assistant with Genie"
    ```
 
 2. **Update the environment variables** in the app.yaml file:
@@ -84,7 +84,7 @@ This demo shows how to create an interactive interface that connects to the Geni
 3. **Deploy the app**:
    Remember to edit the path here to match where you synced your code to.
    ```bash
-   databricks apps deploy pbi-genie-assistant --source-code-path /Workspace/Users/carlos.dip@databricks.com/Genie_DBApps_Baseline
+   databricks apps deploy powerbi-genie-assistant --source-code-path /Workspace/Users/carlos.dip@databricks.com/pbi_genie_app
    ```
    You can leave out the full path for subsequent deploys.
 
