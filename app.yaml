@@ -1,0 +1,7 @@
+command:
+- "python"
+- "app.py"
+
+env:
+- name: "SPACE_ID"
+  value: "01f0663affb21e319dd62d0c67d89cf8"
