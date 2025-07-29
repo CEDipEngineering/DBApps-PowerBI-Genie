@@ -22,10 +22,7 @@ def register_callbacks(app):
          Output("chat-input-fixed", "value", allow_duplicate=True),
          Output("welcome-container", "className", allow_duplicate=True),
          Output("chat-trigger", "data", allow_duplicate=True),
-         Output("query-running-store", "data", allow_duplicate=True),
-         Output("chat-list", "children", allow_duplicate=True),
-         Output("chat-history-store", "data", allow_duplicate=True),
-         Output("session-store", "data", allow_duplicate=True)],
+         Output("query-running-store", "data", allow_duplicate=True)],
         [Input("suggestion-1", "n_clicks"),
          Input("suggestion-2", "n_clicks"),
          Input("suggestion-3", "n_clicks"),
@@ -38,15 +35,12 @@ def register_callbacks(app):
          State("suggestion-4-text", "children"),
          State("chat-input-fixed", "value"),
          State("chat-messages", "children"),
-         State("welcome-container", "className"),
-         State("chat-list", "children"),
-         State("chat-history-store", "data"),
-         State("session-store", "data")],
+         State("welcome-container", "className")],
         prevent_initial_call=True
     )
     def handle_all_inputs(s1_clicks, s2_clicks, s3_clicks, s4_clicks, send_clicks, submit_clicks,
                          s1_text, s2_text, s3_text, s4_text, input_value, current_messages,
-                         welcome_class, current_chat_list, chat_history, session_data):
+                         welcome_class):
         ctx = callback_context
         if not ctx.triggered:
             return [no_update] * 8
@@ -68,7 +62,7 @@ def register_callbacks(app):
             user_input = input_value
         
         if not user_input:
-            return [no_update] * 8
+            return [no_update] * 5
         
         # Create user message
         user_message = create_user_message(user_input)
@@ -80,61 +74,25 @@ def register_callbacks(app):
         thinking_indicator = create_thinking_indicator()
         updated_messages.append(thinking_indicator)
         
-        # Handle session management
-        if session_data["current_session"] is None:
-            session_data = {"current_session": len(chat_history) if chat_history else 0}
-        
-        current_session = session_data["current_session"]
-        
-        # Update chat history
-        if chat_history is None:
-            chat_history = []
-        
-        if current_session < len(chat_history):
-            chat_history[current_session]["messages"] = updated_messages
-            chat_history[current_session]["queries"].append(user_input)
-        else:
-            chat_history.insert(0, {
-                "session_id": current_session,
-                "queries": [user_input],
-                "messages": updated_messages
-            })
-        
-        # Update chat list
-        updated_chat_list = []
-        for i, session in enumerate(chat_history):
-            first_query = session["queries"][0]
-            is_active = (i == current_session)
-            updated_chat_list.append(
-                html.Div(
-                    first_query,
-                    className=f"chat-item{'active' if is_active else ''}",
-                    id={"type": "chat-item", "index": i}
-                )
-            )
-        
         return (updated_messages, "", "welcome-container hidden",
-                {"trigger": True, "message": user_input}, True,
-                updated_chat_list, chat_history, session_data)
+                {"trigger": True, "message": user_input}, True)
 
     # Second callback: Make API call and show response
     @app.callback(
         [Output("chat-messages", "children", allow_duplicate=True),
-         Output("chat-history-store", "data", allow_duplicate=True),
          Output("chat-trigger", "data", allow_duplicate=True),
          Output("query-running-store", "data", allow_duplicate=True)],
         [Input("chat-trigger", "data")],
-        [State("chat-messages", "children"),
-         State("chat-history-store", "data")],
+        [State("chat-messages", "children")],
         prevent_initial_call=True
     )
-    def get_model_response(trigger_data, current_messages, chat_history):
+    def get_model_response(trigger_data, current_messages):
         if not trigger_data or not trigger_data.get("trigger"):
-            return dash.no_update, dash.no_update, dash.no_update, dash.no_update
+            return dash.no_update, dash.no_update, dash.no_update
         
         user_input = trigger_data.get("message", "")
         if not user_input:
-            return dash.no_update, dash.no_update, dash.no_update, dash.no_update
+            return dash.no_update, dash.no_update, dash.no_update
         
         try:
             response, query_text = genie_query(user_input)
@@ -165,116 +123,52 @@ def register_callbacks(app):
                 ])
             
             # Create bot response
-            bot_response = create_bot_response(content, len(chat_history))
+            bot_response = create_bot_response(content, 0)
             
-            # Update chat history with both user message and bot response
-            if chat_history and len(chat_history) > 0:
-                chat_history[0]["messages"] = current_messages[:-1] + [bot_response]  
-            return current_messages[:-1] + [bot_response], chat_history, {"trigger": False, "message": ""}, False
+            return current_messages[:-1] + [bot_response], {"trigger": False, "message": ""}, False
             
         except Exception as e:
             error_msg = f"Sorry, I encountered an error: {str(e)}. Please try again later."
             error_response = create_error_response(error_msg)
             
-            # Update chat history with both user message and error response
-            if chat_history and len(chat_history) > 0:
-                chat_history[0]["messages"] = current_messages[:-1] + [error_response]
-            
-            return current_messages[:-1] + [error_response], chat_history, {"trigger": False, "message": ""}, False
+            return current_messages[:-1] + [error_response], {"trigger": False, "message": ""}, False
 
     # Toggle sidebar and speech button
     @app.callback(
         [Output("sidebar", "className"),
-         Output("new-chat-button", "style"),
-         Output("sidebar-new-chat-button", "style"),
-         Output("logo-container", "className"),
-         Output("nav-left", "className"),
-         Output("left-component", "className"),
-         Output("main-content", "className")],
+         Output("dashboard-area", "className")],
         [Input("sidebar-toggle", "n_clicks")],
         [State("sidebar", "className"),
-         State("left-component", "className"),
-         State("main-content", "className")]
+         State("dashboard-area", "className")]
     )
-    def toggle_sidebar(n_clicks, current_sidebar_class, current_left_component_class, current_main_content_class):
+    def toggle_sidebar(n_clicks, current_sidebar_class, current_dashboard_class):
         if n_clicks:
-            if "sidebar-open" in current_sidebar_class:
+            if "open" in current_sidebar_class:
                 # Sidebar is closing
-                return "sidebar", {"display": "flex"}, {"display": "none"}, "logo-container", "nav-left", "left-component", "main-content"
+                return "sidebar", "dashboard-area"
             else:
                 # Sidebar is opening
-                return "sidebar sidebar-open", {"display": "none"}, {"display": "flex"}, "logo-container logo-container-open", "nav-left nav-left-open", "left-component left-component-open", "main-content main-content-shifted"
+                return "sidebar open", "dashboard-area sidebar-open"
         # Initial state
-        return current_sidebar_class, {"display": "flex"}, {"display": "none"}, "logo-container", "nav-left", "left-component", current_main_content_class
+        return current_sidebar_class, current_dashboard_class
 
-    # Add callback for chat item selection
-    @app.callback(
-        [Output("chat-messages", "children", allow_duplicate=True),
-         Output("welcome-container", "className", allow_duplicate=True),
-         Output("chat-list", "children", allow_duplicate=True),
-         Output("session-store", "data", allow_duplicate=True)],
-        [Input({"type": "chat-item", "index": ALL}, "n_clicks")],
-        [State("chat-history-store", "data"),
-         State("chat-list", "children"),
-         State("session-store", "data")],
-        prevent_initial_call=True
-    )
-    def show_chat_history(n_clicks, chat_history, current_chat_list, session_data):
-        ctx = dash.callback_context
-        if not ctx.triggered:
-            return dash.no_update, dash.no_update, dash.no_update, dash.no_update
-        
-        # Get the clicked item index
-        triggered_id = ctx.triggered[0]["prop_id"].split(".")[0]
-        clicked_index = json.loads(triggered_id)["index"]
-        
-        if not chat_history or clicked_index >= len(chat_history):
-            return dash.no_update, dash.no_update, dash.no_update, dash.no_update
-        
-        # Update session data to the clicked session
-        new_session_data = {"current_session": clicked_index}
-        
-        # Update active state in chat list
-        updated_chat_list = []
-        for i, item in enumerate(current_chat_list):
-            new_class = "chat-item active" if i == clicked_index else "chat-item"
-            updated_chat_list.append(
-                html.Div(
-                    item["props"]["children"],
-                    className=new_class,
-                    id={"type": "chat-item", "index": i}
-                )
-            )
-        
-        return (chat_history[clicked_index]["messages"], 
-                "welcome-container hidden", 
-                updated_chat_list,
-                new_session_data)
+
 
     # Modify the new chat button callback to reset session
     @app.callback(
         [Output("welcome-container", "className", allow_duplicate=True),
          Output("chat-messages", "children", allow_duplicate=True),
          Output("chat-trigger", "data", allow_duplicate=True),
-         Output("query-running-store", "data", allow_duplicate=True),
-         Output("chat-history-store", "data", allow_duplicate=True),
-         Output("session-store", "data", allow_duplicate=True)],
-        [Input("new-chat-button", "n_clicks"),
-         Input("sidebar-new-chat-button", "n_clicks")],
+         Output("query-running-store", "data", allow_duplicate=True)],
+        [Input("new-chat-button", "n_clicks")],
         [State("chat-messages", "children"),
          State("chat-trigger", "data"),
-         State("chat-history-store", "data"),
-         State("chat-list", "children"),
-         State("query-running-store", "data"),
-         State("session-store", "data")],
+         State("query-running-store", "data")],
         prevent_initial_call=True
     )
-    def reset_to_welcome(n_clicks1, n_clicks2, chat_messages, chat_trigger, chat_history_store, 
-                        chat_list, query_running, session_data):
+    def reset_to_welcome(n_clicks, chat_messages, chat_trigger, query_running):
         # Reset session when starting a new chat
-        new_session_data = {"current_session": None}
-        return ("welcome-container visible", [], {"trigger": False, "message": ""}, 
-                False, chat_history_store, new_session_data)
+        return ("welcome-container visible", [], {"trigger": False, "message": ""}, False)
 
     @app.callback(
         [Output("welcome-container", "className", allow_duplicate=True)],
@@ -293,7 +187,6 @@ def register_callbacks(app):
         [Output("chat-input-fixed", "disabled"),
          Output("send-button-fixed", "disabled"),
          Output("new-chat-button", "disabled"),
-         Output("sidebar-new-chat-button", "disabled"),
          Output("query-tooltip", "className")],
         [Input("query-running-store", "data")],
         prevent_initial_call=True
@@ -303,7 +196,7 @@ def register_callbacks(app):
         tooltip_class = "query-tooltip visible" if query_running else "query-tooltip hidden"
         
         # Disable input and buttons when query is running
-        return query_running, query_running, query_running, query_running, tooltip_class
+        return query_running, query_running, query_running, tooltip_class
 
     # Fix the callback for thumbs up/down buttons
     @app.callback(
