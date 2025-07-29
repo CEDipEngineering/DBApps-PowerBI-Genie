@@ -106,6 +106,8 @@ This demo shows how to create an interactive interface that connects to the Geni
    - Go to **File** > **Embed report** > **Website or portal**
    - Copy the embed URL from the dialog
 
+   ![Power BI Embed Setup](assets/pbi_embed_page.png)
+
 2. **Configure the embed URL**:
    - Update the `POWERBI_EMBED_URL` environment variable in `app.yaml`
    - The URL should look like: `https://app.powerbi.com/reportEmbed?reportId=xxx&autoAuth=true&ctid=xxx`
@@ -120,8 +122,10 @@ For more information about Power BI embedding, see the [official Microsoft docum
 
 ### Using the Application
 
+![Power BI Assistant UI](assets/final_print.png)
+
 1. **View Dashboard**: The Power BI dashboard is displayed in the main area
-2. **Access Assistant**: Click the menu button (☰) to open the Genie chat sidebar
+2. **Access Assistant**: The Genie chat assistant is always visible on the left side
 3. **Ask Questions**: Use the chat to ask about your dashboard data
 4. **New Chat**: Click the "+" button to start a fresh conversation
 5. **Customize**: Edit the welcome message and suggestions via the settings button

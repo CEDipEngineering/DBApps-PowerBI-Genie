@@ -133,24 +133,7 @@ def register_callbacks(app):
             
             return current_messages[:-1] + [error_response], {"trigger": False, "message": ""}, False
 
-    # Toggle sidebar and speech button
-    @app.callback(
-        [Output("sidebar", "className"),
-         Output("dashboard-area", "className")],
-        [Input("sidebar-toggle", "n_clicks")],
-        [State("sidebar", "className"),
-         State("dashboard-area", "className")]
-    )
-    def toggle_sidebar(n_clicks, current_sidebar_class, current_dashboard_class):
-        if n_clicks:
-            if "open" in current_sidebar_class:
-                # Sidebar is closing
-                return "sidebar", "dashboard-area"
-            else:
-                # Sidebar is opening
-                return "sidebar open", "dashboard-area sidebar-open"
-        # Initial state
-        return current_sidebar_class, current_dashboard_class
+
 
 
 

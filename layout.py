@@ -5,15 +5,12 @@ from config import DEFAULT_WELCOME_TITLE, DEFAULT_WELCOME_DESCRIPTION, DEFAULT_S
 from components import create_welcome_modal
 
 def create_layout():
-    """Create the main application layout with Power BI embed and sidebar chat"""
+    """Create the main application layout with Power BI embed and left-side chat"""
     return html.Div([
         # Top navigation bar
         html.Div([
-            # Left component containing sidebar toggle and logo
+            # Left component containing logo
             html.Div([
-                html.Button([
-                    html.Img(src="assets/menu_icon.svg", className="menu-icon")
-                ], id="sidebar-toggle", className="nav-button"),
                 html.Div("Power BI Assistant", id="logo-container", className="logo-container")
             ], className="nav-left"),
             
@@ -31,24 +28,9 @@ def create_layout():
             ], className="nav-right")
         ], className="top-nav"),
         
-        # Main content area with Power BI embed and sidebar
+        # Main content area with left-side chat and Power BI dashboard
         html.Div([
-            # Power BI Dashboard Area (Main Stage)
-            html.Div([
-                html.Div([
-                    html.H3("Power BI Dashboard", className="dashboard-title"),
-                    html.Iframe(
-                        src=POWERBI_EMBED_URL,
-                        width="100%",
-                        height="800",
-                        frameBorder="0",
-                        allowFullScreen="true",
-                        className="powerbi-iframe"
-                    )
-                ], className="dashboard-container")
-            ], id="dashboard-area", className="dashboard-area"),
-            
-            # Sidebar Chat Area
+            # Left-side Chat Area (Always Visible)
             html.Div([
                 html.Div([
                     html.Div([
@@ -140,6 +122,19 @@ def create_layout():
                     ], id="fixed-input-wrapper", className="fixed-input-wrapper"),
                 ], className="sidebar-content")
             ], id="sidebar", className="sidebar"),
+            
+            # Power BI Dashboard Area (Right Side)
+            html.Div([
+                html.Div([
+                    html.H3("Power BI Dashboard", className="dashboard-title"),
+                    html.Iframe(
+                        src=POWERBI_EMBED_URL,
+                        width="100%",
+                        height="800",
+                        className="powerbi-iframe"
+                    )
+                ], className="dashboard-container")
+            ], id="dashboard-area", className="dashboard-area"),
         ], id="main-content", className="main-content"),
         
         html.Div(id='dummy-output'),
