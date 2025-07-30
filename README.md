@@ -23,6 +23,26 @@ The Databricks Genie Conversation APIs enable you to embed AI/BI Genie capabilit
 - Follow up with contextual questions in a conversation thread
 - View generated SQL queries and results in an interactive format
 
+## ⚠️ Important Warning: Separate Datasets Configuration
+
+**Critical**: This application uses **separate datasets** for Power BI and Genie. Genie **cannot access Power BI's semantic layer** and operates independently from your Power BI data model.
+
+### What this means:
+- **Power BI** uses its own dataset with its semantic layer, relationships, and calculated measures
+- **Genie** connects directly to your underlying data sources (e.g., Databricks tables) and generates its own SQL queries
+- **No automatic synchronization** exists between Power BI's semantic layer and Genie's data access
+
+### Configuration Responsibility:
+- **Power BI Developer**: Must ensure the Power BI dataset is properly configured with the correct data sources, relationships, and measures
+- **Genie Room Developer**: Must configure Genie to access the same underlying data sources that Power BI uses
+- **Harmonious Setup**: Both systems must be configured to reference the same underlying data tables/views to ensure consistency
+
+### Best Practices:
+1. **Data Source Alignment**: Ensure both Power BI and Genie point to the same underlying data sources
+2. **Naming Conventions**: Use consistent naming between Power BI measures and Genie-accessible data
+3. **Regular Validation**: Periodically verify that both systems return consistent results for the same queries
+4. **Documentation**: Maintain clear documentation of data sources and configurations for both systems
+
 ## Key Features
 
 - **Power BI Dashboard Embed**: Your Power BI dashboard is embedded as the main content area
