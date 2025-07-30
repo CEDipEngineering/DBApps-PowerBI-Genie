@@ -43,6 +43,20 @@ The Databricks Genie Conversation APIs enable you to embed AI/BI Genie capabilit
 3. **Regular Validation**: Periodically verify that both systems return consistent results for the same queries
 4. **Documentation**: Maintain clear documentation of data sources and configurations for both systems
 
+## Feedback Limitations
+
+**Note**: The thumbs up/down feedback buttons in the chat interface are **not currently propagated** to the Genie Room. The Genie Conversation API does not yet support feedback submission.
+
+### What this means:
+- **Local Feedback Only**: User feedback is captured in the UI but not sent to Genie for learning/improvement
+- **No Model Training**: Feedback does not contribute to Genie's response quality improvements
+- **Future Enhancement**: This limitation may be addressed in future API updates
+
+### Current Behavior:
+- Feedback buttons are functional in the UI for user experience
+- Feedback data is not transmitted to the Genie Room
+- No impact on Genie's response generation or learning
+
 ## Key Features
 
 - **Power BI Dashboard Embed**: Your Power BI dashboard is embedded as the main content area
