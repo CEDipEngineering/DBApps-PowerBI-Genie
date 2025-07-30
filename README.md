@@ -4,6 +4,15 @@
 
 This repository demonstrates how to create a Power BI dashboard assistant that integrates Databricks' AI/BI Genie Conversation APIs, allowing users to interact with their Power BI dashboards using natural language queries.
 
+## End Product Overview
+
+This is what the final UI looks like:
+![Power BI Assistant UI](assets/end_product.png)
+
+We are using Power BI's official embedding, which has built-in authentication to your normal Entra ID provider. 
+
+In this case Genie **IS NOT** using the end-user's authentication, and is using the app's provided service-principal as the runner of all queries. If you'd like to adapt this code to use `on-behalf-of-user authorization`, check out [this page](https://docs.databricks.com/aws/en/dev-tools/databricks-apps/auth#user-authorization) to learn more.
+
 ## Overview
 
 This app is a modern Dash application featuring a Power BI dashboard embed with an intuitive chat interface powered by Databricks Genie Conversation APIs. The application runs as a Databricks App and provides a seamless experience where users can view their Power BI dashboards while having an AI assistant available to help them understand and analyze the data.
