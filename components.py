@@ -96,11 +96,15 @@ def create_bot_response(content, chat_history_index):
             content,
             html.Div([
                 html.Div([
-                    html.Button(
+                    html.Button([
+                        html.Img(src="/assets/thumbs_up_icon.svg", alt="Thumbs up")
+                    ],
                         id={"type": "thumbs-up-button", "index": chat_history_index},
                         className="thumbs-up-button"
                     ),
-                    html.Button(
+                    html.Button([
+                        html.Img(src="/assets/thumbs_down_icon.svg", alt="Thumbs down")
+                    ],
                         id={"type": "thumbs-down-button", "index": chat_history_index},
                         className="thumbs-down-button"
                     )

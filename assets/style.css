@@ -445,6 +445,13 @@ body {
     animation: none;
 }
 
+/* Message actions styling */
+.message-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
 /* Additional styles for better UX */
 .input-button:hover, .message-actions button:hover {
     background-color: #F0F0F0;
@@ -633,15 +640,57 @@ input:disabled, button:disabled {
     opacity: 0.7;
 }
 
+/* Thumbs up/down button base styles */
+.thumbs-up-button,
+.thumbs-down-button {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.thumbs-up-button:hover,
+.thumbs-down-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.thumbs-up-button img,
+.thumbs-down-button img {
+    width: 16px;
+    height: 16px;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.thumbs-up-button:hover img,
+.thumbs-down-button:hover img {
+    opacity: 0.8;
+}
+
 /* Thumbs up/down active states */
 .thumbs-up-button.active {
     background-color: rgba(0, 128, 0, 0.1);
     border-radius: 4px;
 }
 
+.thumbs-up-button.active img {
+    opacity: 1;
+}
+
 .thumbs-down-button.active {
     background-color: rgba(255, 0, 0, 0.1);
     border-radius: 4px;
+}
+
+.thumbs-down-button.active img {
+    opacity: 1;
 }
 
 .export {

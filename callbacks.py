@@ -104,13 +104,13 @@ def register_callbacks(app):
                 df = pd.DataFrame(response)
                 
                 # Create the table
-                table_id = f"table-{len(chat_history)}"
+                table_id = f"table-{len(current_messages)}"
                 data_table = create_data_table(df, table_id)
 
                 # Format SQL query if available
                 query_section = None
                 if query_text is not None:
-                    query_index = f"{len(chat_history)}-{len(current_messages)}"
+                    query_index = f"{len(current_messages)}-{len(current_messages)}"
                     query_section = create_query_section(query_text, query_index)
 
                 # Create content with table and optional SQL section

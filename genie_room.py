@@ -293,17 +293,23 @@ def process_genie_response(client, conversation_id, message_id, complete_message
             columns = [col.get('name') for col in schema.get('columns', [])]
             
             # If we have data, return as DataFrame
-            if data_array:
+            if data_array and len(data_array) > 0:
                 # If no columns from schema, create generic ones
                 if not columns and data_array and len(data_array) > 0:
                     columns = [f"column_{i}" for i in range(len(data_array[0]))]
                 
                 df = pd.DataFrame(data_array, columns=columns)
                 return df, query_text
+            else:
+                # No results found - return a meaningful message
+                return "No results found for your query. Please try refining your search criteria or check if the data you're looking for exists in the database.", query_text
     
     # If no attachments or no data in attachments, return text content
     if 'content' in complete_message:
-        return complete_message.get('content', ''), None
+        content = complete_message.get('content', '')
+        # Check if the content is just repeating the question (common when no results)
+        if content and len(content.strip()) > 0:
+            return content, None
     
     return "No response available", None
 
